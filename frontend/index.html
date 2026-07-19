@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FleetFocus</title>
+  <script>
+    // Simple entry point: send the user to the right place based on
+    // whether a JWT token is already stored.
+    if (localStorage.getItem("jwtToken")) {
+      window.location.href = "dashboard.html";
+    } else {
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+<body></body>
+</html>

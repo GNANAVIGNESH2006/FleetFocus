@@ -1,0 +1,169 @@
+/* ==========================================================================
+   FleetFocus Frontend - Shared Styles
+   Works alongside Bootstrap 5 (loaded via CDN in every page).
+   ========================================================================== */
+
+:root {
+  --ff-primary: #0d6efd;
+  --ff-dark: #1e2a3a;
+  --ff-dark-light: #263b53;
+  --ff-sidebar-width: 240px;
+}
+
+body {
+  background-color: #f4f6f9;
+  min-height: 100vh;
+}
+
+/* ---------- Login page ---------- */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--ff-dark) 0%, var(--ff-dark-light) 100%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  border: none;
+  border-radius: 0.75rem;
+}
+
+.login-brand {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  width: var(--ff-sidebar-width);
+  background-color: var(--ff-dark);
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar .brand {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #fff;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.75);
+  padding: 0.65rem 1.25rem;
+  border-left: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sidebar .nav-link i {
+  font-size: 1.05rem;
+}
+
+.sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.sidebar .nav-link.active {
+  color: #fff;
+  background-color: rgba(13, 110, 253, 0.25);
+  border-left-color: var(--ff-primary);
+}
+
+/* Sidebar as offcanvas on small screens */
+@media (max-width: 991.98px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1045;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease-in-out;
+  }
+  .sidebar.show {
+    transform: translateX(0);
+  }
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1040;
+  }
+  .sidebar-backdrop.show {
+    display: block;
+  }
+}
+
+/* ---------- Top navbar ---------- */
+.topbar {
+  background-color: #fff;
+  border-bottom: 1px solid #e5e9ef;
+}
+
+/* ---------- Main content ---------- */
+.main-content {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+/* ---------- Stat cards (dashboard) ---------- */
+.stat-card {
+  border: none;
+  border-radius: 0.75rem;
+  color: #fff;
+  overflow: hidden;
+}
+
+.stat-card .stat-icon {
+  font-size: 2.2rem;
+  opacity: 0.8;
+}
+
+.stat-card .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.bg-ff-blue { background: linear-gradient(135deg, #0d6efd, #3d8bfd); }
+.bg-ff-green { background: linear-gradient(135deg, #198754, #3ac776); }
+.bg-ff-amber { background: linear-gradient(135deg, #fd7e14, #ffb15e); }
+.bg-ff-red { background: linear-gradient(135deg, #dc3545, #f2606d); }
+
+/* ---------- Cards / tables ---------- */
+.content-card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.table thead th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6c757d;
+  border-bottom-width: 1px;
+}
+
+/* ---------- Loading spinner overlay ---------- */
+#loadingSpinner {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.65);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- Utility ---------- */
+.cursor-pointer {
+  cursor: pointer;
+}

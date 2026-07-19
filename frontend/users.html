@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Users - FleetFocus</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="d-flex">
+  <nav id="sidebar" class="sidebar d-flex flex-column">
+    <div class="brand"><i class="bi bi-truck me-2"></i>FleetFocus</div>
+    <ul class="nav flex-column py-2">
+      <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+      <li class="nav-item" data-roles="ADMIN,DISPATCHER"><a class="nav-link" href="vehicles.html"><i class="bi bi-car-front"></i>Vehicles</a></li>
+      <li class="nav-item" data-roles="ADMIN,DISPATCHER"><a class="nav-link" href="drivers.html"><i class="bi bi-person-badge"></i>Drivers</a></li>
+      <li class="nav-item" data-roles="ADMIN,DISPATCHER"><a class="nav-link" href="trips.html"><i class="bi bi-sign-turn-right"></i>Trips</a></li>
+      <li class="nav-item" data-roles="ADMIN,DISPATCHER"><a class="nav-link" href="maintenance.html"><i class="bi bi-tools"></i>Maintenance</a></li>
+      <li class="nav-item" data-roles="ADMIN"><a class="nav-link active" href="users.html"><i class="bi bi-people"></i>Users</a></li>
+    </ul>
+  </nav>
+  <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+  <div class="flex-grow-1 d-flex flex-column">
+    <nav class="navbar topbar px-3">
+      <button id="sidebarToggleBtn" class="btn btn-outline-secondary d-lg-none me-2"><i class="bi bi-list"></i></button>
+      <span class="navbar-brand mb-0 h5 d-none d-sm-inline">User Management</span>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <span id="navUserLabel" class="text-muted small"></span>
+        <a href="#" id="logoutBtn" class="btn btn-sm btn-outline-danger"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>
+      </div>
+    </nav>
+    <main class="main-content">
+      <div id="usersAlert"></div>
+      <div class="card content-card">
+        <div class="card-body">
+          <h5 class="mb-3"><i class="bi bi-people me-1"></i>System Users</h5>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th class="text-end">Action</th></tr></thead>
+              <tbody id="usersTableBody"><tr><td colspan="5" class="text-center text-muted py-4">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog"><div class="modal-content">
+    <form id="roleForm">
+      <div class="modal-header">
+        <h5 class="modal-title">Update Role</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="roleFormAlert"></div>
+        <input type="hidden" id="roleUserId" />
+        <label for="newRole" class="form-label">Role</label>
+        <select class="form-select" id="newRole" required>
+          <option value="ADMIN">ADMIN</option>
+          <option value="DISPATCHER">DISPATCHER</option>
+          <option value="DRIVER">DRIVER</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </div>
+    </form>
+  </div></div>
+</div>
+
+<div class="modal fade" id="userDeleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger me-1"></i>Confirm Delete</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">Are you sure you want to delete this user? This action cannot be undone.</div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      <button type="button" id="confirmUserDeleteBtn" class="btn btn-danger">Delete</button>
+    </div>
+  </div></div>
+</div>
+
+<div id="loadingSpinner" class="d-none">
+  <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/users.js"></script>
+</body>
+</html>
