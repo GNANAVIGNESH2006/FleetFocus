@@ -1,6 +1,7 @@
 package com.example.fleetfocus.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.example.fleetfocus.entity.VehicleStatus;
+import jakarta.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class StatusUpdateDto {
 
-    @NotBlank(message = "Status is required")
-    private String status;
+    @NotNull(message = "Status is required")
+    private VehicleStatus status;
 }
 

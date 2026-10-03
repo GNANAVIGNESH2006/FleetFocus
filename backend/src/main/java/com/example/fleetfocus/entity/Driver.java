@@ -25,15 +25,15 @@ public class Driver {
 
     @NotBlank(message = "Driver name is required")
     @Size(min = 3, max = 50, message = "Driver name must be between 3 and 50 characters")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String name;
 
     @NotBlank(message = "License number is required")
     @Pattern(
-            regexp = "^[A-Za-z0-9-]+$",
-            message = "License number contains invalid characters"
+            regexp = "^[A-Za-z0-9-]{5,30}$",
+            message = "License number must be 5-30 characters and contain only letters, digits, or hyphens"
     )
-    @Column(name = "license_number", unique = true, nullable = false)
+    @Column(name = "license_number", unique = true, nullable = false, length = 30)
     private String licenseNumber;
 
     @NotNull(message = "Driver status is required")
@@ -41,6 +41,6 @@ public class Driver {
     @Column(nullable = false)
     private DriverStatus status;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username", unique = true, length = 30)
     private String username;
 }

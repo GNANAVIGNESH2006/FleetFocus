@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
@@ -31,18 +32,22 @@ public class SystemUser implements UserDetails {
     private Long id;
 
     @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
-    @Column(unique = true, nullable = false)
+    @Pattern(
+            regexp = "^[A-Za-z0-9._-]{3,30}$",
+            message = "Username must be between 3 and 30 characters"
+    )
+    @Column(unique = true, nullable = false, length = 30)
     private String username;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must contain at least 6 characters")
+    @Size(min = 8, message = "Password must contain at least 8 characters")
     @Column(nullable = false)
     private String password;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Enter a valid email address")
-    @Column(unique = true, nullable = false)
+    @Size(max = 100, message = "Email must not exceed 100 characters")
+    @Column(unique = true, nullable = false, length = 100)
     private String email;
 
     @NotNull(message = "User role is required")

@@ -1,22 +1,29 @@
-# Maven
+# Maven / Java
 target/
-
-# IntelliJ
-.idea/
-*.iml
-
-# VS Code
-.vscode/
-
-# Logs
+*.class
+*.jar
+*.war
+*.ear
 *.log
 
-# OS
+# Environment & Secrets
+.env
+*.env
+.env.*
+!.env.example
+application-local.properties
+application-dev.properties
+application-prod.properties
+
+# Dependencies & Build
+node_modules/
+
+# IDEs & OS
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
 .DS_Store
 Thumbs.db
-
-# Environment
-.env
-
-# Java
-*.class

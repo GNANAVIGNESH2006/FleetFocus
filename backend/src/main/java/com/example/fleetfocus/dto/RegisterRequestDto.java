@@ -5,33 +5,44 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class RegisterRequestDto {
 
     @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
+    @Pattern(
+            regexp = "^[A-Za-z0-9._-]{3,30}$",
+            message = "Username must be 3-30 characters and contain only letters, digits, dots, underscores, or hyphens"
+    )
     private String username;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must contain at least 6 characters")
+    @Size(min = 8, max = 72, message = "Password must be between 8 and 72 characters")
     private String password;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Enter a valid email address")
+    @Size(max = 100, message = "Email must not exceed 100 characters")
     private String email;
 
-    @NotBlank(message = "Role is required")
-    @Pattern(
-            regexp = "ADMIN|DISPATCHER|DRIVER",
-            message = "Role must be ADMIN, DISPATCHER or DRIVER"
-    )
-    private String role;
+    public RegisterRequestDto(String username, String password, String email) {
+        setUsername(username);
+        setPassword(password);
+        setEmail(email);
+    }
+
+    public void setUsername(String username) {
+        this.username = username != null ? username.trim() : null;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email != null ? email.trim() : null;
+    }
 }

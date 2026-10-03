@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Maintenance - FleetFocus</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 <div class="d-flex">
-  <nav id="sidebar" class="sidebar d-flex flex-column">
+  <nav id="sidebar" class="sidebar d-flex flex-column" aria-label="Main navigation">
     <div class="brand"><i class="bi bi-truck me-2"></i>FleetFocus</div>
     <ul class="nav flex-column py-2">
       <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
@@ -27,7 +27,7 @@
   <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
   <div class="flex-grow-1 d-flex flex-column">
     <nav class="navbar topbar px-3">
-      <button id="sidebarToggleBtn" class="btn btn-outline-secondary d-lg-none me-2"><i class="bi bi-list"></i></button>
+      <button id="sidebarToggleBtn" class="btn btn-outline-secondary d-lg-none me-2" aria-label="Toggle navigation"><i class="bi bi-list"></i></button>
       <span class="navbar-brand mb-0 h5 d-none d-sm-inline">Maintenance Management</span>
       <div class="ms-auto d-flex align-items-center gap-3">
         <span id="navUserLabel" class="text-muted small"></span>
@@ -35,7 +35,7 @@
       </div>
     </nav>
     <main class="main-content">
-      <div id="maintenanceAlert"></div>
+      <div id="maintenanceAlert" aria-live="polite"></div>
 
       <div class="card content-card" data-roles="ADMIN,DISPATCHER">
         <div class="card-body">
@@ -43,12 +43,45 @@
             <h5 class="mb-0"><i class="bi bi-tools me-1"></i>Maintenance Logs</h5>
             <button id="addMaintenanceBtn" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Log Maintenance</button>
           </div>
+          <div class="row g-2 mb-3">
+            <div class="col-12 col-md-5">
+              <input type="search" id="maintenanceSearch" class="form-control form-control-sm" placeholder="Search by vehicle plate, model, or description..." aria-label="Search maintenance logs" />
+            </div>
+            <div class="col-6 col-md-4">
+              <select id="maintenanceStatusFilter" class="form-select form-select-sm" aria-label="Filter by status">
+                <option value="">All Statuses</option>
+                <option value="IN_PROGRESS">IN_PROGRESS</option>
+                <option value="COMPLETED">COMPLETED</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-3">
+              <select id="maintenanceSort" class="form-select form-select-sm" aria-label="Sort maintenance logs">
+                <option value="id,desc">Sort: Newest First</option>
+                <option value="serviceDate,desc">Sort: Service Date (Desc)</option>
+                <option value="cost,desc">Sort: Cost (High-Low)</option>
+              </select>
+            </div>
+          </div>
           <div class="table-responsive">
-            <table class="table table-hover align-middle">
-              <thead><tr><th>ID</th><th>Vehicle</th><th>Service Date</th><th>Description</th><th>Cost</th><th class="text-end admin-only">Action</th></tr></thead>
-              <tbody id="maintenanceTableBody"><tr><td colspan="6" class="text-center text-muted py-4">Loading...</td></tr></tbody>
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Vehicle</th>
+                  <th>Service Date</th>
+                  <th>Completed Date</th>
+                  <th>Description</th>
+                  <th>Cost</th>
+                  <th>Status</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody id="maintenanceTableBody">
+                <tr><td colspan="8" class="text-center text-muted py-4">Loading...</td></tr>
+              </tbody>
             </table>
           </div>
+          <div id="maintenancePagination"></div>
         </div>
       </div>
 
@@ -68,14 +101,18 @@
     <div class="modal-content">
       <form id="maintenanceForm">
         <div class="modal-header">
-          <h5 class="modal-title">Log Maintenance</h5>
+          <h5 class="modal-title" id="maintenanceModalTitle">Log Maintenance</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div id="maintenanceFormAlert"></div>
+          <div id="maintenanceFormAlert" aria-live="polite"></div>
           <div class="mb-3" data-roles="ADMIN,DISPATCHER">
             <label for="maintenanceVehicleId" class="form-label">Vehicle</label>
-            <select class="form-select" id="maintenanceVehicleId" required><option value="">Loading vehicles...</option></select>
+            <select class="form-select" id="maintenanceVehicleId"><option value="">Loading vehicles...</option></select>
+          </div>
+          <div class="mb-3" data-roles="DRIVER">
+            <label for="driverAssignedVehicleDisplay" class="form-label">Assigned Vehicle</label>
+            <input type="text" class="form-control" id="driverAssignedVehicleDisplay" readonly />
           </div>
           <div class="mb-3">
             <label for="serviceDate" class="form-label">Service Date</label>
@@ -83,16 +120,16 @@
           </div>
           <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" rows="2" required></textarea>
+            <textarea class="form-control" id="description" rows="2" maxlength="500" required></textarea>
           </div>
           <div class="mb-1">
             <label for="cost" class="form-label">Cost</label>
-            <input type="number" step="0.01" min="0" class="form-control" id="cost" required />
+            <input type="number" step="0.01" min="0" max="9999999999.99" class="form-control" id="cost" required />
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="submit" id="maintenanceSubmitBtn" class="btn btn-primary">Save</button>
         </div>
       </form>
     </div>
@@ -102,10 +139,12 @@
 <div id="loadingSpinner" class="d-none">
   <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
+<script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="vendor/axios/axios.min.js"></script>
+<script src="js/config.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/api.js"></script>
+<script src="js/layout.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/maintenance.js"></script>
 </body>

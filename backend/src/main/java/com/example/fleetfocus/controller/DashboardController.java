@@ -8,15 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/api/dashboard")
-@CrossOrigin(origins = {
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-        "http://localhost:63342"
-})
 public class DashboardController {
 
     private final DashboardService dashboardService;
@@ -37,4 +31,3 @@ public class DashboardController {
                 dashboardService.getDashboardStats(authentication.getName(), role));
     }
 }
-

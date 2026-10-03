@@ -1,10 +1,12 @@
 package com.example.fleetfocus.controller;
 
-import com.example.fleetfocus.entity.Driver;
+import com.example.fleetfocus.dto.DriverRequestDto;
+import com.example.fleetfocus.dto.DriverResponseDto;
+import com.example.fleetfocus.dto.DriverStatusUpdateDto;
+import com.example.fleetfocus.dto.PageResult;
+import com.example.fleetfocus.entity.DriverStatus;
 import com.example.fleetfocus.service.DriverService;
-
 import jakarta.validation.Valid;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,15 +14,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/drivers")
-@CrossOrigin(origins = {
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-        "http://localhost:63342"
-})
 public class DriverController {
 
     private final DriverService driverService;
@@ -31,53 +27,58 @@ public class DriverController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
-    public ResponseEntity<List<Driver>> getAllDrivers() {
-        return ResponseEntity.ok(driverService.getAllDrivers());
+    public ResponseEntity<List<DriverResponseDto>> getAllDrivers(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) DriverStatus status,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sort) {
+        PageResult<DriverResponseDto> result = driverService.getDrivers(q, status, page, size, sort);
+        return ResponseEntity.ok()
+                .header("X-Total-Count", String.valueOf(result.getTotalElements()))
+                .body(result.getItems());
     }
 
     @GetMapping("/available")
     @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
-    public ResponseEntity<List<Driver>> getAvailableDrivers() {
+    public ResponseEntity<List<DriverResponseDto>> getAvailableDrivers() {
         return ResponseEntity.ok(driverService.getAvailableDrivers());
     }
 
     @GetMapping("/me")
     @PreAuthorize("hasRole('DRIVER')")
-    public ResponseEntity<Driver> getMyProfile(Authentication authentication) {
+    public ResponseEntity<DriverResponseDto> getMyProfile(Authentication authentication) {
         return ResponseEntity.ok(driverService.getDriverByUsername(authentication.getName()));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
-    public ResponseEntity<Driver> getDriverById(@PathVariable Long id) {
+    public ResponseEntity<DriverResponseDto> getDriverById(@PathVariable Long id) {
         return ResponseEntity.ok(driverService.getDriverById(id));
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Driver> createDriver(
-            @Valid @RequestBody Driver driver) {
-
+    public ResponseEntity<DriverResponseDto> createDriver(
+            @Valid @RequestBody DriverRequestDto driver) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(driverService.createDriver(driver));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Driver> updateDriver(
+    public ResponseEntity<DriverResponseDto> updateDriver(
             @PathVariable Long id,
-            @Valid @RequestBody Driver driver) {
-
+            @Valid @RequestBody DriverRequestDto driver) {
         return ResponseEntity.ok(driverService.updateDriver(id, driver));
     }
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
-    public ResponseEntity<Driver> updateDriverStatus(
+    public ResponseEntity<DriverResponseDto> updateDriverStatus(
             @PathVariable Long id,
-            @RequestBody Map<String, String> request) {
-
-        return ResponseEntity.ok(driverService.updateDriverStatus(id, request.get("status")));
+            @Valid @RequestBody DriverStatusUpdateDto request) {
+        return ResponseEntity.ok(driverService.updateDriverStatus(id, request.getStatus()));
     }
 
     @DeleteMapping("/{id}")
@@ -87,4 +88,3 @@ public class DriverController {
         return ResponseEntity.ok("Driver deleted successfully");
     }
 }
-

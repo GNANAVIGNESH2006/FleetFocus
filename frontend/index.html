@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <title>FleetFocus</title>
+  <script src="js/auth.js"></script>
   <script>
-    // Simple entry point: send the user to the right place based on
-    // whether a JWT token is already stored.
-    if (localStorage.getItem("jwtToken")) {
+    const token = localStorage.getItem("jwtToken");
+    if (token && !isTokenExpired(token)) {
       window.location.href = "dashboard.html";
     } else {
+      clearSession();
       window.location.href = "login.html";
     }
   </script>

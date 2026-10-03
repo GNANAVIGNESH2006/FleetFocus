@@ -1,8 +1,10 @@
 package com.example.fleetfocus.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
@@ -24,18 +26,21 @@ public class Vehicle {
     private Long id;
 
     @NotBlank(message = "VIN is required")
-    @Size(min = 10, max = 10, message = "VIN must contain exactly 10 characters")
+    @Pattern(
+            regexp = "^[A-HJ-NPR-Z0-9]{17}$",
+            message = "VIN must contain 17 valid characters"
+    )
     @Column(unique = true, nullable = false, length = 17)
     private String vin;
 
     @NotBlank(message = "License plate is required")
     @Size(min = 4, max = 15, message = "License plate must be between 4 and 15 characters")
-    @Column(name = "license_plate", unique = true, nullable = false)
+    @Column(name = "license_plate", unique = true, nullable = false, length = 15)
     private String licensePlate;
 
     @NotBlank(message = "Vehicle model is required")
     @Size(min = 2, max = 50, message = "Model must be between 2 and 50 characters")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String model;
 
     @NotNull(message = "Vehicle status is required")
@@ -45,6 +50,7 @@ public class Vehicle {
 
     @NotNull(message = "Current mileage is required")
     @PositiveOrZero(message = "Mileage cannot be negative")
-    @Column(name = "current_mileage")
+    @DecimalMax(value = "9999999.0", message = "Mileage cannot exceed 9,999,999")
+    @Column(name = "current_mileage", nullable = false)
     private Double currentMileage;
 }

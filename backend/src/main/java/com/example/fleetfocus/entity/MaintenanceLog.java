@@ -1,15 +1,18 @@
 package com.example.fleetfocus.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -33,11 +36,21 @@ public class MaintenanceLog {
     private LocalDate serviceDate;
 
     @NotBlank(message = "Maintenance description is required")
-    @Column(nullable = false)
+    @Size(max = 500, message = "Description must not exceed 500 characters")
+    @Column(nullable = false, length = 500)
     private String description;
 
     @NotNull(message = "Maintenance cost is required")
-    @PositiveOrZero(message = "Cost cannot be negative")
-    @Column(nullable = false)
-    private Double cost;
+    @DecimalMin(value = "0.00", message = "Cost cannot be negative")
+    @Digits(integer = 10, fraction = 2, message = "Cost must have at most 10 integer digits and 2 decimal places")
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal cost;
+
+    @NotNull(message = "Maintenance status is required")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "varchar(32) default 'IN_PROGRESS'")
+    private MaintenanceStatus status = MaintenanceStatus.IN_PROGRESS;
+
+    @Column(name = "completed_date")
+    private LocalDate completedDate;
 }

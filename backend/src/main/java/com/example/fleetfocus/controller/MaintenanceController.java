@@ -1,10 +1,11 @@
 package com.example.fleetfocus.controller;
 
-import com.example.fleetfocus.entity.MaintenanceLog;
+import com.example.fleetfocus.dto.MaintenanceRequestDto;
+import com.example.fleetfocus.dto.MaintenanceResponseDto;
+import com.example.fleetfocus.dto.PageResult;
+import com.example.fleetfocus.entity.MaintenanceStatus;
 import com.example.fleetfocus.service.MaintenanceService;
-
 import jakarta.validation.Valid;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,11 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/maintenance")
-@CrossOrigin(origins = {
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-        "http://localhost:63342"
-})
 public class MaintenanceController {
 
     private final MaintenanceService maintenanceService;
@@ -30,28 +26,39 @@ public class MaintenanceController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
-    public ResponseEntity<List<MaintenanceLog>> getAllLogs() {
-        return ResponseEntity.ok(maintenanceService.getAllLogs());
+    public ResponseEntity<List<MaintenanceResponseDto>> getAllLogs(
+            @RequestParam(required = false) Long vehicleId,
+            @RequestParam(required = false) MaintenanceStatus status,
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sort) {
+        PageResult<MaintenanceResponseDto> result = maintenanceService.getLogs(vehicleId, status, q, page, size, sort);
+        return ResponseEntity.ok()
+                .header("X-Total-Count", String.valueOf(result.getTotalElements()))
+                .body(result.getItems());
     }
 
     @PostMapping("/log/{vehicleId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER', 'DRIVER')")
-    public ResponseEntity<MaintenanceLog> logMaintenance(
+    public ResponseEntity<MaintenanceResponseDto> logMaintenance(
             @PathVariable Long vehicleId,
-            @Valid @RequestBody MaintenanceLog log,
+            @Valid @RequestBody MaintenanceRequestDto log,
             Authentication authentication) {
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(maintenanceService.logMaintenance(vehicleId, log, authentication));
+    }
+
+    @PutMapping("/{id}/complete")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
+    public ResponseEntity<MaintenanceResponseDto> completeMaintenance(@PathVariable Long id) {
+        return ResponseEntity.ok(maintenanceService.completeMaintenance(id));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteMaintenance(@PathVariable Long id) {
-
         maintenanceService.deleteMaintenance(id);
-
         return ResponseEntity.noContent().build();
     }
 }
-

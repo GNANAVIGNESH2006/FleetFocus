@@ -4,11 +4,11 @@
 
    - Attaches the JWT (from localStorage) to every request.
    - Redirects to the login page on any 401 Unauthorized response.
-
-   Change API_BASE_URL below if your backend runs on a different host/port.
+   - Never logs out on 403 Forbidden.
    ========================================================================== */
 
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = (window.FLEETFOCUS_CONFIG && window.FLEETFOCUS_CONFIG.API_BASE_URL)
+  || "http://localhost:8080/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -29,7 +29,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ---- Response interceptor: handle 401 Unauthorized globally ----
+// ---- Response interceptor: handle 401 Unauthorized globally (never logout on 403) ----
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -38,8 +38,8 @@ api.interceptors.response.use(
       localStorage.removeItem("username");
       localStorage.removeItem("role");
 
-      // Avoid an infinite redirect loop if we are already on the login page.
-      if (!window.location.pathname.endsWith("login.html")) {
+      const path = window.location.pathname || "";
+      if (!path.endsWith("login.html") && !path.endsWith("register.html")) {
         window.location.href = "login.html";
       }
     }

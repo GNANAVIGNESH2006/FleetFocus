@@ -1,6 +1,7 @@
 package com.example.fleetfocus.dto;
 
-import jakarta.validation.constraints.Pattern;
+import com.example.fleetfocus.entity.UserRole;
+import jakarta.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,10 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RoleUpdateDto {
 
-    @Pattern(
-            regexp = "ADMIN|DISPATCHER|DRIVER",
-            message = "Role must be ADMIN, DISPATCHER or DRIVER"
-    )
-    private String role;
+    @NotNull(message = "Role is required")
+    private UserRole role;
 }
 

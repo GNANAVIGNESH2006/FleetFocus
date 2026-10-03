@@ -23,6 +23,7 @@ public class DashboardDto {
 
     private Long todaysTrips;
     private Long activeTrips;
+    private Long overdueTrips;
     private Long pendingAssignments;
 
     private String driverName;
@@ -33,4 +34,3 @@ public class DashboardDto {
     private String myCurrentTripStatus;
     private Long myCompletedTripsCount;
 }
-
