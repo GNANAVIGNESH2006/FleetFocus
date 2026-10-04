@@ -6,7 +6,7 @@
 
 window.FLEETFOCUS_CONFIG = Object.assign(
   {
-    API_BASE_URL: "http://localhost:8080/api"
+    API_BASE_URL: "https://fleetfocus-production.up.railway.app/api"
   },
   window.FLEETFOCUS_CONFIG || {}
 );

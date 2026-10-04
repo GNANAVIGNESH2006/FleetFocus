@@ -8,7 +8,7 @@
    ========================================================================== */
 
 const API_BASE_URL = (window.FLEETFOCUS_CONFIG && window.FLEETFOCUS_CONFIG.API_BASE_URL)
-  || "http://localhost:8080/api";
+  || "https://fleetfocus-production.up.railway.app/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
